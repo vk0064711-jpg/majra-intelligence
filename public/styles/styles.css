@@ -1,0 +1,563 @@
+/* =========================
+   GLOBAL
+   ========================= */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
+  background-color: #f3f4f6;
+  color: #111827;
+}
+
+h1,
+h2,
+h3 {
+  margin: 0 0 0.5rem;
+  font-weight: 600;
+}
+
+p {
+  margin: 0 0 0.5rem;
+  font-size: 0.9rem;
+}
+
+/* Generic wide form container (complaints etc.) */
+.form-wide {
+  max-width: 900px;
+}
+
+/* =========================
+   AUTH CARDS
+   ========================= */
+
+#auth-container {
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 0 16px;
+}
+
+.auth-card {
+  background: #ffffff;
+  border-radius: 10px;
+  padding: 20px 24px;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.12);
+  margin-bottom: 20px;
+}
+
+.form-row {
+  margin-bottom: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+label {
+  font-size: 0.85rem;
+  color: #374151;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="date"],
+input[type="file"],
+textarea,
+select {
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid #d1d5db;
+  font-size: 0.9rem;
+  outline: none;
+  width: 100%;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.2);
+}
+
+textarea {
+  min-height: 80px;
+  resize: vertical;
+}
+
+/* =========================
+   BUTTONS
+   ========================= */
+
+.btn {
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  padding: 8px 14px;
+  font-size: 0.9rem;
+}
+
+.btn.primary {
+  background-color: #15803d;
+  color: #ffffff;
+}
+
+.btn.primary:hover {
+  background-color: #166534;
+}
+
+.btn.secondary {
+  background-color: #1d4ed8;
+  color: #ffffff;
+}
+
+.btn.secondary:hover {
+  background-color: #1e40af;
+}
+
+.btn.subtle {
+  background-color: #e5e7eb;
+  color: #111827;
+}
+
+.btn.subtle:hover {
+  background-color: #d1d5db;
+}
+
+/* Small buttons (table + toolbar) */
+.btn-table,
+.btn.btn-small {
+  font-size: 0.8rem;
+  padding: 4px 8px;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-table.delete,
+.btn-small.delete {
+  background-color: #dc2626;
+  color: #ffffff;
+}
+
+.btn-table.delete:hover,
+.btn-small.delete:hover {
+  background-color: #b91c1c;
+}
+
+.message {
+  font-size: 0.8rem;
+  margin-top: 6px;
+}
+
+/* =========================
+   MAIN APP LAYOUT
+   ========================= */
+
+#dashboard {
+  min-height: 100vh;
+}
+
+.topbar {
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  background: #0f172a;
+  color: #e5e7eb;
+}
+
+.logo-circle {
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  background: #22c55e;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  color: #0f172a;
+  margin-right: 10px;
+}
+
+/* Logo image for letter / topbar (when used) */
+.logo-img {
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  object-fit: cover;
+  margin-right: 8px;
+}
+
+/* Small logo for letter header */
+.logo-circle.small {
+  width: 26px;
+  height: 26px;
+  font-size: 0.8rem;
+}
+
+.topbar-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.app-title {
+  font-size: 1rem;
+}
+
+.app-subtitle {
+  font-size: 0.75rem;
+  color: #9ca3af;
+}
+
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.user-summary {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  font-size: 0.75rem;
+}
+
+/* Layout under topbar */
+
+.app-layout {
+  display: flex;
+  min-height: calc(100vh - 64px);
+}
+
+/* Sidebar */
+
+.sidebar {
+  width: 240px;
+  background: #020617;
+  color: #e5e7eb;
+  padding: 16px 0;
+}
+
+.sidebar-section {
+  margin-bottom: 16px;
+}
+
+.sidebar-title {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 8px 16px;
+  color: #6b7280;
+}
+
+.nav-btn {
+  width: 100%;
+  text-align: left;
+  padding: 8px 16px;
+  border: none;
+  background: transparent;
+  color: #e5e7eb;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.nav-btn:hover {
+  background: #111827;
+}
+
+.nav-btn.active {
+  background: #16a34a;
+  color: #ffffff;
+}
+
+/* Main content */
+
+.content {
+  flex: 1;
+  padding: 24px 32px;
+  max-width: none;
+}
+
+/* Cards */
+
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  margin-top: 12px;
+}
+
+.card {
+  background: #ffffff;
+  border-radius: 10px;
+  padding: 16px 18px;
+  box-shadow: 0 10px 28px rgba(15, 23, 42, 0.08);
+}
+
+.card.large {
+  width: 100%;
+}
+
+/* For header row in complaint register */
+.card-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Simple flex for export toolbar */
+.export-toolbar {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+/* Status cards */
+
+.card.status .big-number {
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 4px 0;
+}
+
+.card.status.green {
+  border-left: 4px solid #16a34a;
+}
+
+.card.status.yellow {
+  border-left: 4px solid #ca8a04;
+}
+
+.card.status.red {
+  border-left: 4px solid #dc2626;
+}
+
+/* Views */
+
+.app-view {
+  display: none;
+}
+
+.app-view.active {
+  display: block;
+}
+
+/* =========================
+   TABLES
+   ========================= */
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+.data-table th,
+.data-table td {
+  border: 1px solid #e5e7eb;
+  padding: 6px 8px;
+  text-align: left;
+}
+
+.data-table thead {
+  background-color: #f9fafb;
+}
+
+/* Complaint table small font */
+#complaints-table-body td,
+#complaints-table-body th {
+  font-size: 0.8rem;
+}
+
+/* Supplier logo thumbnail (used in supplier register) */
+.supplier-logo-thumb {
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  object-fit: cover;
+}
+
+/* Status pills */
+
+.status-pill {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+}
+
+.status-open {
+  background-color: #fee2e2;
+  color: #b91c1c;
+}
+
+.status-in-progress {
+  background-color: #fef3c7;
+  color: #92400e;
+}
+
+.status-closed {
+  background-color: #dcfce7;
+  color: #166534;
+}
+
+/* =========================
+   LETTER EDITOR + LOGO
+   ========================= */
+
+.letter-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+
+.letter-toolbar select,
+.letter-toolbar input[type="color"] {
+  font-size: 0.8rem;
+  padding: 4px 6px;
+}
+
+.letter-toolbar button {
+  border: 1px solid #d1d5db;
+  background: #f9fafb;
+  padding: 4px 6px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.letter-toolbar button:hover {
+  background: #e5e7eb;
+}
+
+/* Wrapper including logo + editor + bottom line */
+.letter-editor-shell {
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  background: #ffffff;
+  padding: 10px;
+}
+
+/* Top logo bar inside letter */
+.letter-logo-top {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-bottom: 1px solid #e5e7eb;
+  padding-bottom: 8px;
+  margin-bottom: 8px;
+}
+
+.letter-logo-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.letter-logo-title {
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.letter-logo-subtitle {
+  font-size: 0.75rem;
+  color: #6b7280;
+}
+
+/* Editable letter body */
+.letter-editor {
+  min-height: 160px;
+  border-radius: 6px;
+  border: none;
+  padding: 10px 0;
+  font-size: 0.9rem;
+  outline: none;
+}
+
+/* Bottom logo/footer line */
+.letter-logo-bottom {
+  border-top: 1px solid #e5e7eb;
+  margin-top: 8px;
+  padding-top: 6px;
+  font-size: 0.7rem;
+  color: #6b7280;
+  text-align: center;
+}
+
+/* For trend bars (if used on dashboard later) */
+.trend-bar {
+  height: 6px;
+  background: #16a34a;
+  border-radius: 999px;
+  margin-top: 3px;
+}
+
+/* =========================
+   FOOTER
+   ========================= */
+
+.footer {
+  padding: 10px 24px;
+  font-size: 0.75rem;
+  color: #6b7280;
+  background: #f9fafb;
+  border-top: 1px solid #e5e7eb;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.footer a {
+  color: #2563eb;
+  text-decoration: none;
+  font-size: 0.8rem;
+}
+
+.footer a:hover {
+  text-decoration: underline;
+}
+
+/* =========================
+   RESPONSIVE
+   ========================= */
+
+@media (max-width: 900px) {
+  .app-layout {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: 100%;
+    display: flex;
+    overflow-x: auto;
+  }
+
+  .sidebar-section {
+    margin-right: 16px;
+  }
+
+  .sidebar-title {
+    padding: 8px;
+  }
+
+  .nav-btn {
+    padding: 8px 10px;
+  }
+
+  .content {
+    padding: 16px;
+  }
+
+  .form-wide {
+    max-width: 100%;
+  }
+}

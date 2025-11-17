@@ -1,0 +1,1902 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Majra Intelligence – Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="styles/styles.css" />
+</head>
+
+<body>
+
+  <!-- ===============================
+       AUTH CONTAINER (REGISTER + LOGIN)
+       =============================== -->
+  <div id="auth-container">
+
+    <!-- REGISTER -->
+    <section id="register-section" class="auth-card">
+      <h2>Register (Create Company + Admin)</h2>
+      <form id="register-form">
+        <div class="form-row">
+          <label for="reg-company">Company Name</label>
+          <input type="text" id="reg-company" required />
+        </div>
+
+        <div class="form-row">
+          <label for="reg-name">Your Name</label>
+          <input type="text" id="reg-name" required />
+        </div>
+
+        <div class="form-row">
+          <label for="reg-email">Email</label>
+          <input type="email" id="reg-email" required />
+        </div>
+
+        <div class="form-row">
+          <label for="reg-password">Password</label>
+          <input type="password" id="reg-password" required />
+        </div>
+
+        <button type="submit" class="btn primary">Register</button>
+      </form>
+      <p id="register-message" class="message"></p>
+    </section>
+
+    <!-- LOGIN -->
+    <section id="login-section" class="auth-card">
+      <h2>Login</h2>
+      <form id="login-form">
+        <div class="form-row">
+          <label for="login-email">Email</label>
+          <input type="email" id="login-email" required />
+        </div>
+
+        <div class="form-row">
+          <label for="login-password">Password</label>
+          <input type="password" id="login-password" required />
+        </div>
+
+        <button type="submit" class="btn secondary">Login</button>
+      </form>
+      <p id="login-message" class="message"></p>
+    </section>
+
+  </div>
+
+  <!-- ===============================
+       MAIN APP (DASHBOARD + SIDEBAR + VIEWS)
+       =============================== -->
+  <div id="dashboard" style="display:none;">
+
+    <!-- Top bar -->
+    <header class="topbar">
+      <div class="topbar-left">
+        <!-- Custom logo image (hidden until set in Settings) -->
+        <img
+          id="top-logo-img"
+          class="logo-img"
+          alt="Company logo"
+          style="display:none;"
+        />
+
+        <!-- Fallback circle logo if no image URL -->
+        <div id="top-logo-circle" class="logo-circle">M</div>
+
+        <div>
+          <div class="app-title">Majra Intelligence</div>
+          <div class="app-subtitle">
+            Food Safety, Quality &amp; Compliance Assistant
+          </div>
+        </div>
+      </div>
+
+      <div class="topbar-right">
+        <div class="user-summary">
+          <span id="top-company-name">Company</span>
+          <span id="top-user-email">user@example.com</span>
+        </div>
+        <button id="logout-btn" class="btn subtle">Logout</button>
+      </div>
+    </header>
+
+    <!-- Layout: sidebar + main content -->
+    <div class="app-layout">
+
+      <!-- Sidebar -->
+      <nav class="sidebar">
+        <div class="sidebar-section">
+          <div class="sidebar-title">Overview</div>
+          <button class="nav-btn active" data-view="view-dashboard">Dashboard</button>
+        </div>
+
+        <div class="sidebar-section">
+          <div class="sidebar-title">Modules</div>
+          <button class="nav-btn" data-view="view-documents">Documents</button>
+          <button class="nav-btn" data-view="view-suppliers">Suppliers</button>
+          <button class="nav-btn" data-view="view-complaints">Complaints</button>
+          <button class="nav-btn" data-view="view-audits">Audits</button>
+          <button class="nav-btn" data-view="view-training">Training</button>
+          <button class="nav-btn" data-view="view-allergens">Allergen Risk</button>
+        </div>
+
+        <div class="sidebar-section">
+          <div class="sidebar-title">System</div>
+          <button class="nav-btn" data-view="view-settings">Settings</button>
+        </div>
+      </nav>
+
+      <!-- Main content -->
+      <main class="content">
+
+        <!-- ===== DASHBOARD VIEW ===== -->
+        <section id="view-dashboard" class="app-view active">
+          <h2>Dashboard Overview</h2>
+          <p id="dashboard-user"></p>
+          <p id="dashboard-company"></p>
+
+          <div class="cards-grid">
+            <!-- Open Complaints card is clickable -->
+            <div class="card status green" id="card-open-complaints" style="cursor:pointer;">
+              <h3>Open Complaints</h3>
+              <p class="big-number" id="dashboard-open-complaints-count">0</p>
+              <p>Customer complaints awaiting investigation.</p>
+            </div>
+            <div class="card status yellow">
+              <h3>Training Due Soon</h3>
+              <p class="big-number" id="dashboard-training-due-count">0</p>
+              <p>Employees with training refreshers due.</p>
+            </div>
+            <div class="card status blue" id="card-suppliers" style="cursor:pointer;">
+  <h3>Total Suppliers</h3>
+  <p class="big-number" id="dashboard-supplier-count">0</p>
+  <p>Suppliers registered in your system.</p>
+</div>
+            <div class="card status red">
+              <h3>Critical Actions Overdue</h3>
+              <p class="big-number" id="dashboard-critical-actions-count">0</p>
+              <p>High-risk non-conformances past deadline.</p>
+            </div>
+          </div>
+
+          <div class="card" style="margin-top:20px;">
+            <p>Dashboard will be extended later with:</p>
+            <ul style="margin-left:1.2rem; margin-top:0.4rem;">
+              <li>Documents</li>
+              <li>Suppliers</li>
+              <li>Complaints</li>
+              <li>Audits</li>
+              <li>Training</li>
+              <li>Allergen risk assessment</li>
+            </ul>
+          </div>
+        </section>
+
+        <!-- ===== DOCUMENTS VIEW ===== -->
+        <!-- ===== DOCUMENTS VIEW (Document Control) ===== -->
+<section id="view-documents" class="app-view">
+  <h2>Document Control</h2>
+  <p>
+    Maintain your controlled documents for SALSA, BRCGS, ISO 22000 and customer standards –
+    with version control, review dates and status tracking.
+  </p>
+
+  <!-- Cards -->
+  <div class="cards-grid" style="margin-top:0.75rem;">
+    <div class="card status green">
+      <h3>Active Documents</h3>
+      <p class="big-number" id="docs-active-count">0</p>
+      <p>Documents currently in use.</p>
+    </div>
+    <div class="card status yellow">
+      <h3>Due / Overdue Review</h3>
+      <p class="big-number" id="docs-overdue-count">0</p>
+      <p>Active documents with review date in the past.</p>
+    </div>
+    <div class="card status blue">
+      <h3>Draft</h3>
+      <p class="big-number" id="docs-draft-count">0</p>
+      <p>Documents under preparation.</p>
+    </div>
+    <div class="card status red">
+      <h3>Obsolete</h3>
+      <p class="big-number" id="docs-obsolete-count">0</p>
+      <p>Superseded / withdrawn documents.</p>
+    </div>
+  </div>
+
+  <!-- Filters -->
+  <div
+    class="card"
+    style="margin-top:1rem; display:flex; gap:8px; flex-wrap:wrap; align-items:flex-end;"
+  >
+    <div>
+      <label for="doc-filter-status" style="font-size:0.85rem;">Status</label>
+      <select id="doc-filter-status">
+        <option value="">All</option>
+        <option value="Active">Active</option>
+        <option value="Draft">Draft</option>
+        <option value="Obsolete">Obsolete</option>
+      </select>
+    </div>
+
+    <div>
+      <label for="doc-filter-standard" style="font-size:0.85rem;">Standard</label>
+      <select id="doc-filter-standard">
+        <option value="">All</option>
+        <option value="SALSA">SALSA</option>
+        <option value="BRCGS Food">BRCGS Food</option>
+        <option value="ISO 22000">ISO 22000</option>
+        <option value="FSSC 22000">FSSC 22000</option>
+        <option value="Customer standard">Customer standard</option>
+        <option value="Internal">Internal</option>
+      </select>
+    </div>
+
+    <button type="button" class="btn subtle" id="doc-filter-clear">
+      Clear filters
+    </button>
+  </div>
+
+  <!-- New / Edit document form -->
+  <div class="card large" style="margin-top:1rem;">
+    <h3>New / Edit Document</h3>
+
+    <form id="document-form" class="form-wide">
+      <input type="hidden" id="doc-id" />
+
+      <div class="form-row">
+        <label for="doc-code">Document Code</label>
+        <input
+          type="text"
+          id="doc-code"
+          placeholder="e.g. DOC-PR-001, HACCP-PL-01"
+        />
+      </div>
+
+      <div class="form-row">
+        <label for="doc-title">Title *</label>
+        <input
+          type="text"
+          id="doc-title"
+          required
+          placeholder="e.g. Glass & Hard Plastic Procedure, Allergen Cleaning SOP"
+        />
+      </div>
+
+      <div class="form-row">
+        <label for="doc-department">Department</label>
+        <input
+          type="text"
+          id="doc-department"
+          placeholder="e.g. Production, QA, Engineering, Warehouse"
+        />
+      </div>
+
+      <div class="form-row">
+        <label for="doc-process">Process / Area</label>
+        <input
+          type="text"
+          id="doc-process"
+          placeholder="e.g. Mixing, Packing line 1, Dispatch"
+        />
+      </div>
+
+      <div class="form-row">
+        <label for="doc-standard">Standard / Scheme</label>
+        <select id="doc-standard">
+          <option value="">-- Select --</option>
+          <option value="SALSA">SALSA</option>
+          <option value="BRCGS Food">BRCGS Food</option>
+          <option value="ISO 22000">ISO 22000</option>
+          <option value="FSSC 22000">FSSC 22000</option>
+          <option value="Customer standard">Customer standard</option>
+          <option value="Internal">Internal</option>
+          <option value="Other">Other (type below)</option>
+        </select>
+        <input
+          type="text"
+          id="doc-standard-other"
+          placeholder="If 'Other', type standard name"
+          style="margin-top:4px;"
+        />
+      </div>
+
+      <div class="form-row">
+        <label for="doc-clause">Clause / Section</label>
+        <input
+          type="text"
+          id="doc-clause"
+          placeholder="e.g. SALSA 1.7, BRC 4.11, Customer spec 3.2"
+        />
+      </div>
+
+      <div class="form-row">
+        <label for="doc-type">Document Type</label>
+        <select id="doc-type">
+          <option value="">-- Select --</option>
+          <option value="Policy">Policy</option>
+          <option value="Procedure">Procedure</option>
+          <option value="Work Instruction">Work Instruction</option>
+          <option value="Form">Form</option>
+          <option value="Record">Record</option>
+          <option value="Plan">Plan</option>
+          <option value="HACCP Document">HACCP Document</option>
+        </select>
+      </div>
+
+      <div class="form-row">
+        <label for="doc-version">Version</label>
+        <input type="text" id="doc-version" placeholder="e.g. 1.0, 2.1" />
+      </div>
+
+      <div class="form-row">
+        <label for="doc-issue">Issue Date</label>
+        <input type="date" id="doc-issue" />
+      </div>
+
+      <div class="form-row">
+        <label for="doc-review">Review Date</label>
+        <input type="date" id="doc-review" />
+      </div>
+
+      <div class="form-row">
+        <label for="doc-status">Status</label>
+        <select id="doc-status">
+          <option value="Draft">Draft</option>
+          <option value="Active" selected>Active</option>
+          <option value="Obsolete">Obsolete</option>
+        </select>
+      </div>
+
+      <div class="form-row">
+        <label for="doc-owner">Owner</label>
+        <input
+          type="text"
+          id="doc-owner"
+          placeholder="Who is responsible (e.g. Technical Manager)"
+        />
+      </div>
+
+      <div class="form-row">
+        <label for="doc-location">File Location</label>
+        <input
+          type="text"
+          id="doc-location"
+          placeholder="SharePoint / Teams / network drive path or file link"
+        />
+      </div>
+
+      <div class="form-row">
+        <label for="doc-notes">Notes</label>
+        <textarea
+          id="doc-notes"
+          placeholder="Any extra comments, links or customer-specific notes."
+        ></textarea>
+      </div>
+
+      <button
+        type="submit"
+        class="btn primary"
+        id="doc-save-btn"
+        style="margin-top:0.75rem;"
+      >
+        Save Document
+      </button>
+      <button
+        type="button"
+        class="btn subtle"
+        id="doc-reset-btn"
+        style="margin-top:0.75rem; margin-left:6px;"
+      >
+        Clear Form
+      </button>
+    </form>
+
+    <p id="documents-message" class="message"></p>
+  </div>
+
+  <!-- Register + exports -->
+  <div class="card large" style="margin-top:1rem;">
+    <div
+      style="display:flex; justify-content:space-between; align-items:center; gap:12px;"
+    >
+      <h3>Document Register</h3>
+      <div style="display:flex; gap:6px; flex-wrap:wrap;">
+        <button type="button" class="btn secondary btn-small" id="doc-export-csv">
+          Export CSV
+        </button>
+        <button type="button" class="btn subtle btn-small" id="doc-export-json">
+          Export JSON
+        </button>
+      </div>
+    </div>
+
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Code</th>
+          <th>Title</th>
+          <th>Dept</th>
+          <th>Standard</th>
+          <th>Clause</th>
+          <th>Type</th>
+          <th>Version</th>
+          <th>Issue</th>
+          <th>Review</th>
+          <th>Status</th>
+          <th>Owner</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="documents-table-body"></tbody>
+    </table>
+  </div>
+</section>
+
+        <!-- ===== SUPPLIERS VIEW ===== -->
+        <section id="view-suppliers" class="app-view">
+          <h2>Suppliers</h2>
+          <p>Approved supplier list, certificates, expiry tracking and risk ratings.</p>
+
+          <!-- New supplier form -->
+          <div class="card large" style="margin-top:1rem;">
+            <h3>Add New Supplier</h3>
+
+            <form id="supplier-form" class="form-wide">
+              <!-- hidden id for edit mode -->
+              <input type="hidden" id="supplier-id" />
+
+              <div class="form-row">
+                <label for="supp-name">Supplier Name</label>
+                <input type="text" id="supp-name" required />
+              </div>
+
+              <div class="form-row">
+                <label for="supp-product">Product / Material Supplied</label>
+                <input
+                  type="text"
+                  id="supp-product"
+                  required
+                  placeholder="e.g. Flour, packaging, cleaning chemicals"
+                />
+              </div>
+
+              <div class="form-row">
+                <label for="supp-certificate">Certificate Type</label>
+                <select id="supp-certificate">
+                  <option value="">-- Select --</option>
+                  <option value="SALSA">SALSA</option>
+                  <option value="BRC">BRC</option>
+                  <option value="BRCGS">BRCGS</option>
+                  <option value="ISO 22000">ISO 22000</option>
+                  <option value="FSSC 22000">FSSC 22000</option>
+                  <option value="Red Tractor">Red Tractor</option>
+                  <option value="Organic">Organic</option>
+                  <option value="Soil Association">Soil Association</option>
+                  <option value="RSPO">RSPO</option>
+                  <option value="Fairtrade">Fairtrade</option>
+                  <option value="Halal">Halal</option>
+                  <option value="Kosher">Kosher</option>
+                </select>
+                <p style="font-size:0.75rem; color:#6b7280; margin-top:4px;">
+                  Choose a standard scheme (SALSA, BRCGS, ISO 22000, Organic, Halal, etc.)
+                  or add your own name below.
+                </p>
+              </div>
+
+              <div class="form-row">
+                <label for="cert-type-new">Add / manage certificate types</label>
+                <div style="display:flex; gap:6px; flex-wrap:wrap;">
+                  <input
+                    type="text"
+                    id="cert-type-new"
+                    placeholder="e.g. Customer own standard, Tesco TFMS, Lidl, etc."
+                    style="flex:1 1 200px;"
+                  />
+                  <button type="button" class="btn subtle" id="cert-type-add-btn">
+                    Add
+                  </button>
+                </div>
+                <p style="font-size:0.75rem; color:#6b7280; margin-top:4px;">
+                  Click “Add” to store a new certificate type. To remove, click the × next
+                  to a pill in the list below (only for custom types).
+                </p>
+              </div>
+
+              <div class="form-row">
+                <label>Certificate types list</label>
+                <div
+                  id="cert-type-list"
+                  style="display:flex;flex-wrap:wrap;gap:6px;font-size:0.75rem;"
+                >
+                  <!-- Pills are rendered by small script at bottom -->
+                </div>
+              </div>
+
+              <div class="form-row">
+                <label for="supp-expiry">Certificate Expiry Date</label>
+                <input type="date" id="supp-expiry" />
+              </div>
+
+              <!-- REAL IMAGE UPLOAD (not URL) -->
+              <div class="form-row">
+                <label for="supp-logo-file">Supplier Logo (PNG / JPG)</label>
+                <input type="file" id="supp-logo-file" accept="image/*" />
+                <p style="font-size:0.75rem; color:#6b7280; margin-top:4px;">
+                  Logo is stored only locally in this browser (like company branding).
+                </p>
+              </div>
+
+              <button
+                type="submit"
+                class="btn primary"
+                id="supplier-save-btn"
+                style="margin-top:0.75rem;"
+              >
+                Save Supplier
+              </button>
+              <button
+                type="button"
+                class="btn subtle"
+                id="supplier-reset-btn"
+                style="margin-top:0.75rem; margin-left:6px;"
+              >
+                Clear Form
+              </button>
+            </form>
+
+            <p id="suppliers-message" class="message"></p>
+          </div>
+
+          <!-- Supplier register -->
+          <div class="card large" style="margin-top:1rem;">
+            <h3>Supplier Register</h3>
+
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Logo</th>
+                  <th>Name</th>
+                  <th>Product</th>
+                  <th>Certificate</th>
+                  <th>Expiry</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="suppliers-table-body"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- ===== COMPLAINTS VIEW (with Investigation + Letter + Exports) ===== -->
+        <section id="view-complaints" class="app-view">
+
+          <h2>Complaints</h2>
+          <p>Customer complaint logging, root cause, CAPA trending and reporting.</p>
+
+          <!-- New complaint form -->
+          <div class="card large">
+            <h3>New Complaint</h3>
+
+            <form id="complaint-form" class="form-wide">
+
+              <div class="form-row">
+                <label for="complaint-date">Date</label>
+                <input type="date" id="complaint-date" required />
+              </div>
+
+              <div class="form-row">
+                <label for="complaint-customer">Customer Name</label>
+                <input type="text" id="complaint-customer" required />
+              </div>
+
+              <div class="form-row">
+                <label for="complaint-product">Product / Item</label>
+                <input type="text" id="complaint-product" required />
+              </div>
+
+              <div class="form-row">
+                <label for="complaint-type">Complaint Type</label>
+                <input
+                  type="text"
+                  id="complaint-type"
+                  placeholder="Foreign body, mould, underweight…"
+                />
+              </div>
+
+              <div class="form-row">
+                <label for="complaint-contamination">Contamination Type</label>
+                <input
+                  type="text"
+                  id="complaint-contamination"
+                  placeholder="Physical, chemical, allergen…"
+                />
+              </div>
+
+              <div class="form-row">
+                <label for="complaint-description">Description</label>
+                <textarea
+                  id="complaint-description"
+                  placeholder="Short description of complaint and any initial findings"
+                  required
+                ></textarea>
+              </div>
+
+              <button
+                type="submit"
+                class="btn primary"
+                style="margin-top:0.75rem;"
+              >
+                Save Complaint
+              </button>
+
+            </form>
+            <p id="complaints-message" class="message"></p>
+          </div>
+
+          <!-- Complaints register + export toolbar -->
+          <div class="card large" style="margin-top:1rem;">
+            <div
+              class="card-header-row"
+              style="display:flex;justify-content:space-between;align-items:center;gap:12px;"
+            >
+              <h3>Complaint Register</h3>
+              <div
+                class="export-toolbar"
+                style="display:flex;gap:6px;flex-wrap:wrap;"
+              >
+                <button
+                  type="button"
+                  id="btn-export-csv"
+                  class="btn secondary btn-small"
+                >
+                  Export CSV
+                </button>
+                <button
+                  type="button"
+                  id="btn-export-word"
+                  class="btn secondary btn-small"
+                >
+                  Export Word
+                </button>
+                <button
+                  type="button"
+                  id="btn-export-pdf"
+                  class="btn secondary btn-small"
+                >
+                  Export PDF
+                </button>
+                <button
+                  type="button"
+                  id="btn-export-json"
+                  class="btn subtle btn-small"
+                >
+                  Download Backup (JSON)
+                </button>
+              </div>
+            </div>
+
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Customer</th>
+                  <th>Product</th>
+                  <th>Type</th>
+                  <th>Contamination</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="complaints-table-body"></tbody>
+            </table>
+          </div>
+
+          <!-- Investigation + Letter card -->
+          <div
+            class="card large"
+            id="complaint-investigation-card"
+            style="margin-top:1rem; display:none;"
+          >
+            <h3>Investigation &amp; Customer Letter</h3>
+            <p
+              id="complaint-selected-title"
+              style="font-size:0.85rem; color:#6b7280; margin-bottom:0.75rem;"
+            >
+              Select a complaint from the register above to start investigation.
+            </p>
+
+            <form id="complaint-investigation-form" class="form-wide">
+
+              <div class="form-row">
+                <label for="investigation-root-cause">Root Cause</label>
+                <textarea
+                  id="investigation-root-cause"
+                  placeholder="Describe root cause based on investigation"
+                ></textarea>
+              </div>
+
+              <div class="form-row">
+                <label for="investigation-corrective">Corrective Action</label>
+                <textarea
+                  id="investigation-corrective"
+                  placeholder="Actions taken to correct this complaint"
+                ></textarea>
+              </div>
+
+              <div class="form-row">
+                <label for="investigation-preventive">Preventive Action</label>
+                <textarea
+                  id="investigation-preventive"
+                  placeholder="Actions implemented to prevent recurrence"
+                ></textarea>
+              </div>
+
+              <div class="form-row">
+                <label for="investigation-outcome">Outcome / Resolution</label>
+                <textarea
+                  id="investigation-outcome"
+                  placeholder="Outcome, compensation, customer response, etc."
+                ></textarea>
+              </div>
+
+              <!-- Internal investigation summary (for report, separate from letter) -->
+              <div class="form-row">
+                <label for="investigation-summary">
+                  Investigation Summary (internal report – auto generated, you can edit)
+                </label>
+                <textarea
+                  id="investigation-summary"
+                  placeholder="Click ‘Generate Investigation Summary’ to create a professional internal summary based on root cause, corrective and preventive actions. You can edit before saving or exporting."
+                ></textarea>
+              </div>
+
+              <hr
+                style="margin:12px 0; border:none; border-top:1px solid #e5e7eb;"
+              />
+
+              <!-- Letter toolbar + editor -->
+              <div class="form-row">
+                <label>Complaint Letter (auto-generated – you can edit)</label>
+
+                <div class="letter-toolbar">
+                  <select id="letter-font-family" title="Font family">
+                    <option value="Calibri,Arial,sans-serif">Calibri</option>
+                    <option value="Arial,Helvetica,sans-serif">Arial</option>
+                    <option value="'Times New Roman',Times,serif">
+                      Times New Roman
+                    </option>
+                    <option value="'Courier New',monospace">Courier New</option>
+                    <option
+                      value="system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif"
+                    >
+                      System UI
+                    </option>
+                  </select>
+
+                  <select id="letter-font-size" title="Font size">
+                    <option value="10px">10</option>
+                    <option value="11px">11</option>
+                    <option value="12px" selected>12</option>
+                    <option value="14px">14</option>
+                    <option value="16px">16</option>
+                    <option value="18px">18</option>
+                    <option value="20px">20</option>
+                    <option value="24px">24</option>
+                    <option value="28px">28</option>
+                    <option value="32px">32</option>
+                  </select>
+
+                  <select id="letter-colour" title="Quick colour">
+                    <option value="#111827">Black</option>
+                    <option value="#b91c1c">Red</option>
+                    <option value="#2563eb">Blue</option>
+                    <option value="#16a34a">Green</option>
+                    <option value="#92400e">Brown</option>
+                  </select>
+
+                  <input
+                    type="color"
+                    id="letter-colour-picker"
+                    value="#111827"
+                    title="Custom colour"
+                  />
+
+                  <button type="button" data-cmd="bold"><strong>B</strong></button>
+                  <button type="button" data-cmd="italic"><em>I</em></button>
+                  <button type="button" data-cmd="underline"><u>U</u></button>
+                  <button type="button" data-cmd="justifyleft">L</button>
+                  <button type="button" data-cmd="justifycenter">C</button>
+                  <button type="button" data-cmd="justifyright">R</button>
+                </div>
+
+                <div class="letter-editor-shell">
+                  <div class="letter-logo-top">
+                    <!-- Custom logo image for letter -->
+                    <img
+                      id="letter-logo-img"
+                      class="logo-img"
+                      alt="Company logo"
+                      style="display:none;"
+                    />
+
+                    <!-- Fallback circle if no logo -->
+                    <div id="letter-logo-circle" class="logo-circle small">M</div>
+
+                    <div class="letter-logo-text">
+                      <div
+                        class="letter-logo-title"
+                        id="letter-company-name-display"
+                      >
+                        Majra Intelligence
+                      </div>
+                      <div class="letter-logo-subtitle">
+                        Food Safety, Quality &amp; Compliance
+                      </div>
+                    </div>
+                  </div>
+
+                  <div
+                    id="complaint-letter-editor"
+                    contenteditable="true"
+                    class="letter-editor"
+                  >
+                    <!-- Click and type / edit letter body -->
+                  </div>
+
+                  <div class="letter-logo-bottom">
+                    <span id="letter-company-footer">
+                      © 2025 Majra Intelligence · Company Logo
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <div
+                style="display:flex; gap:8px; margin-top:0.75rem; flex-wrap:wrap;"
+              >
+                <button type="button" id="btn-generate-summary" class="btn subtle">
+                  Generate Investigation Summary
+                </button>
+                <button type="button" id="btn-generate-letter" class="btn secondary">
+                  Generate Letter from Data
+                </button>
+                <button type="submit" class="btn primary">
+                  Save Investigation &amp; Letter
+                </button>
+                <button type="button" id="btn-letter-print" class="btn subtle">
+                  Print Letter (PDF)
+                </button>
+              </div>
+
+              <p id="investigation-message" class="message"></p>
+            </form>
+          </div>
+
+          <!-- Exports / Backup -->
+          <div class="card large" style="margin-top:1rem;">
+            <h3>Exports &amp; Backup</h3>
+            <p style="font-size:0.85rem; color:#4b5563;">
+              Download a backup of all complaints and investigations for your company.
+            </p>
+            <div
+              style="display:flex; gap:8px; flex-wrap:wrap; margin-top:0.5rem;"
+            >
+              <button type="button" id="btn-export-csv-all" class="btn secondary">
+                Download CSV (Excel)
+              </button>
+              <button type="button" id="btn-export-json-all" class="btn subtle">
+                Download JSON backup
+              </button>
+              <button type="button" id="btn-export-word-all" class="btn primary">
+                Download Word report
+              </button>
+            </div>
+          </div>
+
+        </section>
+<!-- ===== AUDITS VIEW ===== -->
+<section id="view-audits" class="app-view">
+  <h2>Audits &amp; GMP Inspections</h2>
+  <p>
+    Plan internal audits, record findings, CAPA and attach local photo evidence.
+  </p>
+
+  <!-- Quick filters / stats row -->
+  <div class="cards-grid" style="margin-top:0.75rem;">
+    <div class="card status blue">
+      <h3>Open Audits</h3>
+      <p class="big-number" id="dashboard-open-audits-count">0</p>
+      <p>Audits with outstanding actions.</p>
+    </div>
+    <div class="card status yellow">
+      <h3>Due Soon</h3>
+      <p class="big-number" id="audits-due-soon-count">0</p>
+      <p>Audits with due date in next 30 days.</p>
+    </div>
+    <div class="card status green">
+      <h3>Closed</h3>
+      <p class="big-number" id="audits-closed-count">0</p>
+      <p>Audits completed and verified.</p>
+    </div>
+  </div>
+
+  <!-- Filter buttons -->
+  <div
+    class="card"
+    style="margin-top:1rem; display:flex; gap:8px; flex-wrap:wrap; align-items:center;"
+  >
+    <span style="font-size:0.85rem; color:#4b5563;">Filter by status:</span>
+    <button type="button" class="btn subtle btn-small" data-audit-filter="all">
+      All
+    </button>
+    <button type="button" class="btn subtle btn-small" data-audit-filter="open">
+      Open
+    </button>
+    <button
+      type="button"
+      class="btn subtle btn-small"
+      data-audit-filter="in_progress"
+    >
+      In progress
+    </button>
+    <button type="button" class="btn subtle btn-small" data-audit-filter="closed">
+      Closed
+    </button>
+  </div>
+
+  <!-- New / Edit Audit form -->
+  <div class="card large" style="margin-top:1rem;">
+    <h3>New Audit / GMP Inspection</h3>
+
+    <form id="audit-form" class="form-wide">
+      <!-- hidden id for edit mode -->
+      <input type="hidden" id="audit-id" />
+
+      <div class="form-row">
+        <label for="audit-title">Audit Title *</label>
+        <input
+          type="text"
+          id="audit-title"
+          required
+          placeholder="e.g. SALSA Section 1.7 GMP Inspection – Bakery"
+        />
+      </div>
+
+      <div class="form-row">
+        <label for="audit-area">Area / Department</label>
+        <input
+          type="text"
+          id="audit-area"
+          placeholder="e.g. Production, Packing, Warehouse, Engineering"
+        />
+      </div>
+
+      <div class="form-row">
+        <label for="audit-standard">Standard / Scheme</label>
+        <input
+          type="text"
+          id="audit-standard"
+          placeholder="e.g. SALSA 5.0, BRCGS Food 9, Customer standard"
+        />
+      </div>
+
+      <div class="form-row">
+        <label for="audit-section">Clause / Section</label>
+        <input
+          type="text"
+          id="audit-section"
+          placeholder="e.g. SALSA 1.7, BRC 4.11, Tesco TFMS 2.3"
+        />
+      </div>
+
+      <div class="form-row">
+        <label for="audit-auditor">Auditor</label>
+        <input type="text" id="audit-auditor" placeholder="Name of auditor" />
+      </div>
+
+      <div class="form-row">
+        <label for="audit-date">Audit Date</label>
+        <input type="date" id="audit-date" />
+      </div>
+
+      <div class="form-row">
+        <label for="audit-status">Status</label>
+        <select id="audit-status">
+          <option value="open">Open</option>
+          <option value="in_progress">In progress</option>
+          <option value="closed">Closed</option>
+        </select>
+      </div>
+
+      <div class="form-row">
+        <label for="audit-severity">Severity</label>
+        <select id="audit-severity">
+          <option value="">-- Select --</option>
+          <option value="Critical">Critical</option>
+          <option value="Major">Major</option>
+          <option value="Minor">Minor</option>
+          <option value="Observation">Observation</option>
+        </select>
+      </div>
+
+      <div class="form-row">
+        <label for="audit-due-date">Action Due Date</label>
+        <input type="date" id="audit-due-date" />
+      </div>
+
+      <div class="form-row">
+        <label for="audit-responsible">Responsible Person</label>
+        <input
+          type="text"
+          id="audit-responsible"
+          placeholder="Person responsible for actions"
+        />
+      </div>
+
+      <div class="form-row">
+        <label for="audit-findings">Findings / Non-conformances</label>
+        <textarea
+          id="audit-findings"
+          placeholder="Describe audit findings, non-conformances, good practice etc."
+        ></textarea>
+      </div>
+
+      <div class="form-row">
+        <label for="audit-root-cause">Root Cause</label>
+        <textarea
+          id="audit-root-cause"
+          placeholder="Root cause analysis for key findings."
+        ></textarea>
+      </div>
+
+      <div class="form-row">
+        <label for="audit-corrective">Corrective Action</label>
+        <textarea
+          id="audit-corrective"
+          placeholder="Immediate actions to correct the issue."
+        ></textarea>
+      </div>
+
+      <div class="form-row">
+        <label for="audit-preventive">Preventive Action</label>
+        <textarea
+          id="audit-preventive"
+          placeholder="Long-term actions to prevent recurrence."
+        ></textarea>
+      </div>
+
+      <!-- Evidence (local only – not sent to server) -->
+      <div class="form-row">
+        <label for="audit-evidence-file">
+          Photo / Document Evidence (local only)
+        </label>
+        <input
+          type="file"
+          id="audit-evidence-file"
+          accept="image/*,application/pdf"
+        />
+        <p style="font-size:0.75rem; color:#6b7280; margin-top:4px;">
+          Files are not uploaded to the server; you can still keep notes in the audit.
+        </p>
+      </div>
+
+      <button
+        type="submit"
+        class="btn primary"
+        id="audit-save-btn"
+        style="margin-top:0.75rem;"
+      >
+        Save Audit
+      </button>
+      <button
+        type="button"
+        class="btn subtle"
+        id="audit-reset-btn"
+        style="margin-top:0.75rem; margin-left:6px;"
+      >
+        Clear Form
+      </button>
+    </form>
+
+    <p id="audits-message" class="message"></p>
+  </div>
+
+  <!-- Audit register -->
+  <div class="card large" style="margin-top:1rem;">
+    <h3>Audit Register</h3>
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Title</th>
+          <th>Area</th>
+          <th>Standard / Section</th>
+          <th>Severity</th>
+          <th>Status</th>
+          <th>Due</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="audits-table-body"></tbody>
+    </table>
+  </div>
+</section>
+        <!-- ===== TRAINING VIEW ===== -->
+        <!-- ===== TRAINING VIEW ===== -->
+<section id="view-training" class="app-view">
+  <h2>Training &amp; Competency Matrix</h2>
+  <p>
+    Track employee training, refresher dates, validity and certificates across departments.
+  </p>
+
+  <!-- Cards -->
+  <div class="cards-grid" style="margin-top:0.75rem;">
+    <div class="card status blue">
+      <h3>Total Training Records</h3>
+      <p class="big-number" id="training-total-count">0</p>
+      <p>All training entries for your company.</p>
+    </div>
+    <div class="card status yellow">
+      <h3>Due in 30 Days</h3>
+      <p class="big-number" id="training-due-soon-count">0</p>
+      <p>Planned / in-progress training due in the next month.</p>
+    </div>
+    <div class="card status red">
+      <h3>Overdue</h3>
+      <p class="big-number" id="training-overdue-count">0</p>
+      <p>Training past due date and not completed.</p>
+    </div>
+  </div>
+
+  <!-- Filters -->
+  <div
+    class="card"
+    style="margin-top:1rem; display:flex; gap:8px; flex-wrap:wrap; align-items:flex-end;"
+  >
+    <div>
+      <label for="training-filter-status" style="font-size:0.85rem;">Status</label>
+      <select id="training-filter-status">
+        <option value="">All</option>
+        <option value="Planned">Planned</option>
+        <option value="In progress">In progress</option>
+        <option value="Completed">Completed</option>
+        <option value="Overdue">Overdue</option>
+      </select>
+    </div>
+
+    <div>
+      <label for="training-filter-dept" style="font-size:0.85rem;">Department</label>
+      <input
+        type="text"
+        id="training-filter-dept"
+        placeholder="e.g. Production, QA, Engineering"
+      />
+    </div>
+
+    <button type="button" class="btn subtle" id="training-filter-clear">
+      Clear filters
+    </button>
+  </div>
+
+  <!-- New / Edit training form -->
+  <div class="card large" style="margin-top:1rem;">
+    <h3>New / Edit Training Record</h3>
+
+    <form id="training-form" class="form-wide">
+      <input type="hidden" id="training-id" />
+
+      <div class="form-row">
+        <label for="training-employee-name">Employee Name *</label>
+        <input type="text" id="training-employee-name" required />
+      </div>
+
+      <div class="form-row">
+        <label for="training-employee-email">Employee Email</label>
+        <input type="email" id="training-employee-email" />
+      </div>
+
+      <div class="form-row">
+        <label for="training-job-title">Job Title</label>
+        <input type="text" id="training-job-title" placeholder="e.g. Baker, QA Technician" />
+      </div>
+
+      <div class="form-row">
+        <label for="training-department">Department</label>
+        <input type="text" id="training-department" placeholder="Production, QA, Engineering, Warehouse" />
+      </div>
+
+      <div class="form-row">
+        <label for="training-topic">Training Topic *</label>
+        <input
+          type="text"
+          id="training-topic"
+          required
+          placeholder="e.g. Food Safety Level 2, Allergen Awareness, HACCP, GMP"
+        />
+      </div>
+
+      <div class="form-row">
+        <label for="training-type">Training Type</label>
+        <select id="training-type">
+          <option value="">-- Select --</option>
+          <option value="Induction">Induction</option>
+          <option value="HACCP">HACCP</option>
+          <option value="Allergen">Allergen</option>
+          <option value="Food Safety">Food Safety</option>
+          <option value="GMP / Hygiene">GMP / Hygiene</option>
+          <option value="Health & Safety">Health &amp; Safety</option>
+          <option value="External course">External course</option>
+          <option value="Internal coaching">Internal coaching</option>
+        </select>
+      </div>
+
+      <div class="form-row">
+        <label for="training-provider">Provider</label>
+        <input
+          type="text"
+          id="training-provider"
+          placeholder="e.g. Internal trainer, Highfield, NSF, etc."
+        />
+      </div>
+
+      <div class="form-row">
+        <label for="training-status">Status</label>
+        <select id="training-status">
+          <option value="Planned">Planned</option>
+          <option value="In progress">In progress</option>
+          <option value="Completed">Completed</option>
+          <option value="Overdue">Overdue</option>
+        </select>
+      </div>
+
+      <div class="form-row">
+        <label for="training-due-date">Due Date</label>
+        <input type="date" id="training-due-date" />
+      </div>
+
+      <div class="form-row">
+        <label for="training-completion-date">Completion Date</label>
+        <input type="date" id="training-completion-date" />
+      </div>
+
+      <div class="form-row">
+        <label for="training-validity-months">Validity (months)</label>
+        <input
+          type="number"
+          id="training-validity-months"
+          min="0"
+          placeholder="e.g. 12"
+        />
+      </div>
+
+      <div class="form-row">
+        <label for="training-next-review-date">Next Review Date</label>
+        <input type="date" id="training-next-review-date" />
+      </div>
+
+      <div class="form-row">
+        <label for="training-certificate-location">Certificate Location</label>
+        <input
+          type="text"
+          id="training-certificate-location"
+          placeholder="File path / link to certificate"
+        />
+      </div>
+
+      <div class="form-row">
+        <label for="training-notes">Notes</label>
+        <textarea
+          id="training-notes"
+          placeholder="Any comments, refresher notes, assessment outcome, etc."
+        ></textarea>
+      </div>
+
+      <button
+        type="submit"
+        class="btn primary"
+        id="training-save-btn"
+        style="margin-top:0.75rem;"
+      >
+        Save Training
+      </button>
+      <button
+        type="button"
+        class="btn subtle"
+        id="training-reset-btn"
+        style="margin-top:0.75rem; margin-left:6px;"
+      >
+        Clear Form
+      </button>
+    </form>
+
+    <p id="training-message" class="message"></p>
+  </div>
+
+  <!-- Register + exports -->
+  <div class="card large" style="margin-top:1rem;">
+    <div
+      style="display:flex; justify-content:space-between; align-items:center; gap:12px;"
+    >
+      <h3>Training Register</h3>
+      <div style="display:flex; gap:6px; flex-wrap:wrap;">
+        <button type="button" class="btn secondary btn-small" id="training-export-csv">
+          Export CSV
+        </button>
+        <button type="button" class="btn subtle btn-small" id="training-export-json">
+          Export JSON
+        </button>
+      </div>
+    </div>
+
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Employee</th>
+          <th>Email</th>
+          <th>Job Title</th>
+          <th>Dept</th>
+          <th>Topic</th>
+          <th>Status</th>
+          <th>Due</th>
+          <th>Completed</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="training-table-body"></tbody>
+    </table>
+  </div>
+</section>
+
+        <!-- ===== ALLERGENS VIEW – Allergen Awareness (UK 14) ===== -->
+<section id="view-allergens" class="app-view">
+  <h2>Allergen Awareness (UK 14 Allergens)</h2>
+  <p>
+    Quick reference for the 14 regulated allergens in the UK, how to read labels
+    (CONTAINS / MAY CONTAIN) and basic handling good practice for your team.
+  </p>
+
+  <!-- Summary cards -->
+  <div class="cards-grid" style="margin-top:0.75rem;">
+    <div class="card status green">
+      <h3>Total Allergens</h3>
+      <p class="big-number">14</p>
+      <p>Legally recognised allergens in UK / EU law.</p>
+    </div>
+    <div class="card status yellow">
+      <h3>Label Check</h3>
+      <p class="big-number">CONTAINS</p>
+      <p>Highlight allergens in ingredients list.</p>
+    </div>
+    <div class="card status blue">
+      <h3>Cross-Contact</h3>
+      <p class="big-number">MAY CONTAIN</p>
+      <p>For unavoidable cross-contact risk.</p>
+    </div>
+    <div class="card status red">
+      <h3>Severe Reactions</h3>
+      <p class="big-number">Anaphylaxis</p>
+      <p>Requires strict control and clear labelling.</p>
+    </div>
+  </div>
+
+  <!-- Layout: left = list, right = details + label helper -->
+  <div
+    id="allergen-layout"
+    style="margin-top:1rem; display:flex; flex-wrap:wrap; gap:16px; align-items:flex-start;"
+  >
+    <!-- LEFT: allergen list + search -->
+    <div style="flex:1 1 340px; min-width:280px;">
+      <div class="card">
+        <div style="display:flex; justify-content:space-between; gap:8px; align-items:flex-end;">
+          <div>
+            <h3 style="margin-bottom:4px;">UK 14 Allergen List</h3>
+            <p style="font-size:0.85rem; color:#4b5563;">
+              Click an allergen to see details, examples and handling tips.
+            </p>
+          </div>
+          <div>
+            <label for="allergen-search" style="font-size:0.8rem; color:#4b5563;">
+              Search
+            </label>
+            <input
+              type="text"
+              id="allergen-search"
+              placeholder="e.g. milk, sesame, gluten"
+              style="display:block; font-size:0.8rem; padding:4px 6px; min-width:150px;"
+            />
+          </div>
+        </div>
+
+        <table class="data-table" style="margin-top:0.5rem;">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Allergen</th>
+              <th>Typical foods</th>
+            </tr>
+          </thead>
+          <tbody id="allergen-list-body"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- RIGHT: detail panel + label helper + simple guide -->
+    <div style="flex:1 1 360px; min-width:280px;">
+      <!-- Detail panel -->
+      <div class="card">
+        <h3>Allergen details</h3>
+        <p
+          id="allergen-detail-title"
+          style="font-weight:600; margin-top:4px; margin-bottom:4px;"
+        >
+          Select an allergen from the list.
+        </p>
+        <p
+          id="allergen-detail-description"
+          style="font-size:0.85rem; color:#4b5563;"
+        >
+          You’ll see a short explanation, common food examples and basic handling
+          tips here.
+        </p>
+
+        <div id="allergen-detail-extra" style="margin-top:0.5rem; font-size:0.85rem;"></div>
+      </div>
+
+      <!-- Label helper -->
+      <div class="card" style="margin-top:0.75rem;">
+        <h3>Label wording helper</h3>
+        <p style="font-size:0.85rem; color:#4b5563;">
+          Tick allergens present in your recipe and choose if they are
+          <strong>CONTAINS</strong> (intentional ingredient) or
+          <strong>MAY CONTAIN</strong> (cross-contact risk only).
+          This is only a guidance text builder – not legal advice.
+        </p>
+
+        <div id="allergen-label-checkboxes" style="display:flex; flex-wrap:wrap; gap:6px; margin-top:0.5rem;"></div>
+
+        <div style="margin-top:0.75rem;">
+          <label style="font-size:0.8rem; color:#4b5563;">Label type</label>
+          <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:4px;">
+            <label style="font-size:0.85rem;">
+              <input
+                type="radio"
+                name="allergen-label-type"
+                value="contains"
+                checked
+              />
+              Contains
+            </label>
+            <label style="font-size:0.85rem;">
+              <input
+                type="radio"
+                name="allergen-label-type"
+                value="may_contain"
+              />
+              May contain (cross-contact)
+            </label>
+          </div>
+        </div>
+
+        <div style="margin-top:0.75rem;">
+          <label for="allergen-label-output" style="font-size:0.8rem; color:#4b5563;">
+            Suggested label line
+          </label>
+          <textarea
+            id="allergen-label-output"
+            readonly
+            style="width:100%; min-height:70px; font-size:0.85rem; margin-top:4px;"
+          ></textarea>
+        </div>
+      </div>
+
+      <!-- Simple good practice list -->
+      <div class="card" style="margin-top:0.75rem;">
+        <h3>Basic allergen handling good practice</h3>
+        <ul style="font-size:0.85rem; color:#4b5563; margin-left:1.1rem; margin-top:0.35rem;">
+          <li>Keep allergen ingredients in clearly labelled containers.</li>
+          <li>Use dedicated utensils / colour coding where possible.</li>
+          <li>Clean down between products and control dust and spills.</li>
+          <li>Train staff to always check the latest recipe / spec.</li>
+          <li>Never guess – if unsure, treat as containing the allergen.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+        <!-- ===== SETTINGS VIEW ===== -->
+        <section id="view-settings" class="app-view">
+          <h2>Settings</h2>
+          <p>Majra Intelligence settings, branding and company profile.</p>
+
+          <div class="card large" style="margin-top:1rem;">
+            <h3>Branding &amp; Letterhead</h3>
+            <p style="font-size:0.85rem; color:#4b5563; margin-bottom:0.75rem;">
+              Set the company display name and upload a logo image. This will update
+              the top bar and the complaint letter header &amp; footer. Branding is
+              stored only in this browser (localStorage).
+            </p>
+
+            <form id="branding-form" class="form-wide">
+              <div class="form-row">
+                <label for="settings-company-display-name">Company display name</label>
+                <input
+                  type="text"
+                  id="settings-company-display-name"
+                  placeholder="Your company name"
+                />
+              </div>
+
+              <div class="form-row">
+                <label for="settings-logo-file">
+                  Logo image (PNG / JPG)
+                </label>
+                <input
+                  type="file"
+                  id="settings-logo-file"
+                  accept="image/*"
+                />
+                <p style="font-size:0.75rem; color:#6b7280; margin-top:4px;">
+                  Choose a logo from your computer. It will only be saved in this browser.
+                </p>
+              </div>
+
+              <button type="submit" class="btn primary" style="margin-top:0.75rem;">
+                Save Branding
+              </button>
+            </form>
+
+            <p id="settings-branding-message" class="message"></p>
+          </div>
+        </section>
+
+      </main>
+    </div>
+<!-- ===== LEGAL / GDPR VIEW ===== -->
+        <section id="view-legal" class="app-view">
+          <h2>Legal, Terms of Service &amp; Privacy (Demo App)</h2>
+          <p style="font-size:0.9rem; color:#4b5563; margin-bottom:0.75rem;">
+            This Majra Intelligence demo is created by an individual developer and is
+            provided for learning and demonstration only. It is <strong>not</strong> a
+            commercial product, and it does not replace professional legal, food safety
+            or compliance advice.
+          </p>
+
+          <!-- TERMS OF SERVICE -->
+          <div class="card large" style="margin-top:0.75rem;">
+            <h3>Terms of Service</h3>
+            <h4>1. Who operates this app?</h4>
+            <p>
+              This demo application ("Majra Intelligence") is created and operated by a
+              private individual for personal portfolio and educational purposes only.
+              There is no registered company behind this tool.
+            </p>
+
+            <h4>2. Purpose of the app</h4>
+            <p>
+              The app is intended as a <strong>prototype / demo</strong> for food safety,
+              quality and compliance record-keeping. It is not certified, audited or
+              approved by SALSA, BRCGS, ISO, retailers or any regulatory authority.
+            </p>
+
+            <h4>3. No professional advice</h4>
+            <p>
+              The information and example templates in this app are for general
+              information only. They do not constitute professional advice. You remain
+              fully responsible for your own legal compliance, food safety management and
+              documentation.
+            </p>
+
+            <h4>4. Demo data only</h4>
+            <p>
+              This app is intended to be used with <strong>demo data</strong> only. Any
+              "companies", "suppliers", "complaints", "training" or "documents" created
+              inside the demo are not part of a production system. If you enter real
+              data, you do so at your own risk.
+            </p>
+
+            <h4>5. No uptime, support or warranty</h4>
+            <p>
+              The app is provided <strong>"as is"</strong>, with no guarantees of
+              availability, accuracy or support.
+            </p>
+
+            <h4>6. Intellectual property</h4>
+            <p>
+              The layout, wording and structure of this demo app are owned by the
+              individual developer.
+            </p>
+
+            <h4>7. Contact</h4>
+            <p>
+              Email:
+              <a href="mailto:vk0064711@gmail.com">vk0064711@gmail.com</a>
+            </p>
+          </div>
+
+          <!-- PRIVACY POLICY -->
+          <div class="card large" style="margin-top:1rem;">
+            <h3>Privacy Policy (Demo Environment)</h3>
+
+            <p style="font-size:0.85rem; color:#4b5563; margin-bottom:0.5rem;">
+              This privacy section explains how data is handled in this demo
+              environment. It is simplified and not a substitute for a full legal review.
+            </p>
+
+            <h4>1. Data controller</h4>
+            <p>
+              This demo is operated by an individual developer.
+              Contact:
+              <a href="mailto:vk0064711@gmail.com">vk0064711@gmail.com</a>.
+            </p>
+
+            <h4>2. Data collected</h4>
+            <ul>
+              <li>Login email & password (for demo login only)</li>
+              <li>Demo records (suppliers, audits, documents, training etc.)</li>
+              <li>Branding stored in <code>localStorage</code></li>
+            </ul>
+
+            <h4>3. Where data is stored</h4>
+            <ul>
+              <li>Local SQLite database (running on your machine)</li>
+              <li>Your browser’s localStorage (for logo & branding)</li>
+            </ul>
+
+            <h4>4. Security notice</h4>
+            <p>
+              This is not a production system and should not be used with real data.
+            </p>
+          </div>
+        </section>
+   <footer class="footer">
+  <span>© 2025 Majra Intelligence – Powered by Vipin Sharma</span>
+  <span>
+    <a
+      href="https://www.linkedin.com/in/vipin-kumar-762544186"
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      <img
+        src="https://cdn-icons-png.flaticon.com/512/174/174857.png"
+        alt="LinkedIn"
+        style="width:18px; vertical-align:middle; margin-right:4px;"
+      />
+      LinkedIn
+    </a>
+    ·
+    <a href="#" id="footer-gdpr-link" title="GDPR & Privacy – demo text">
+      GDPR &amp; Privacy
+    </a>
+  </span>
+</footer>
+
+  <!-- ===============================
+       SCRIPTS (order is important!)
+       =============================== -->
+ <script src="scripts/api.js"></script>
+<script src="scripts/suppliers.js"></script>
+<script src="scripts/complaints.js"></script>
+<script src="scripts/audits.js"></script>
+<script src="scripts/training.js"></script> <!-- 👈 add this -->
+<script src="scripts/app.js"></script>
+<script src="scripts/dashboard.js"></script>
+<script src="scripts/documents.js"></script>
+<!-- GDPR Footer Navigation -->
+<script>
+  // Make footer "GDPR & Privacy" link open the Legal view inside the app
+  document.addEventListener("DOMContentLoaded", function () {
+    var link = document.getElementById("footer-gdpr-link");
+    if (!link) return;
+
+    link.addEventListener("click", function (e) {
+      e.preventDefault();
+
+      var dashboard = document.getElementById("dashboard");
+      var auth = document.getElementById("auth-container");
+      if (dashboard && auth) {
+        auth.style.display = "none";
+        dashboard.style.display = "block";
+      }
+
+      var views = document.querySelectorAll(".app-view");
+      views.forEach(function (v) {
+        v.classList.remove("active");
+      });
+
+      var legal = document.getElementById("view-legal");
+      if (legal) {
+        legal.classList.add("active");
+      }
+
+      var navBtns = document.querySelectorAll(".nav-btn");
+      navBtns.forEach(function (btn) {
+        btn.classList.remove("active");
+      });
+    });
+  });
+</script>
+  <!-- Small helper for editable certificate types (localStorage only) -->
+  <script>
+    (function () {
+      "use strict";
+
+      var DEFAULT_CERT_TYPES = [
+        "SALSA",
+        "BRC",
+        "BRCGS",
+        "ISO 22000",
+        "FSSC 22000",
+        "Red Tractor",
+        "Organic",
+        "Soil Association",
+        "RSPO",
+        "Fairtrade",
+        "Halal",
+        "Kosher"
+      ];
+      var STORAGE_KEY = "majra_supplier_cert_types_v1";
+      var certTypes = [];
+
+      function loadTypes() {
+        try {
+          var raw = window.localStorage.getItem(STORAGE_KEY);
+          if (raw) {
+            var parsed = JSON.parse(raw);
+            if (Array.isArray(parsed) && parsed.length) {
+              certTypes = parsed;
+              return;
+            }
+          }
+        } catch (e) {
+          console.warn("Cannot read cert types", e);
+        }
+        certTypes = DEFAULT_CERT_TYPES.slice();
+      }
+
+      function saveTypes() {
+        try {
+          window.localStorage.setItem(STORAGE_KEY, JSON.stringify(certTypes));
+        } catch (e) {
+          console.warn("Cannot save cert types", e);
+        }
+      }
+
+      function renderSelect() {
+        var sel = document.getElementById("supp-certificate");
+        if (!sel) return;
+        var current = sel.value;
+
+        sel.innerHTML = "";
+        var placeholder = document.createElement("option");
+        placeholder.value = "";
+        placeholder.textContent = "-- Select --";
+        sel.appendChild(placeholder);
+
+        certTypes.forEach(function (name) {
+          var opt = document.createElement("option");
+          opt.value = name;
+          opt.textContent = name;
+          sel.appendChild(opt);
+        });
+
+        if (current && certTypes.indexOf(current) !== -1) {
+          sel.value = current;
+        } else {
+          sel.value = "";
+        }
+      }
+
+      function renderList() {
+        var list = document.getElementById("cert-type-list");
+        if (!list) return;
+        list.innerHTML = "";
+
+        if (!certTypes.length) {
+          list.textContent = "No certificate types defined.";
+          list.style.color = "#6b7280";
+          return;
+        }
+
+        certTypes.forEach(function (name) {
+          var pill = document.createElement("span");
+          pill.style.display = "inline-flex";
+          pill.style.alignItems = "center";
+          pill.style.gap = "4px";
+          pill.style.padding = "2px 8px";
+          pill.style.borderRadius = "999px";
+          pill.style.background = "#e5e7eb";
+
+          var txt = document.createElement("span");
+          txt.textContent = name;
+          pill.appendChild(txt);
+
+          if (DEFAULT_CERT_TYPES.indexOf(name) === -1) {
+            var btn = document.createElement("button");
+            btn.type = "button";
+            btn.textContent = "×";
+            btn.style.border = "none";
+            btn.style.background = "transparent";
+            btn.style.cursor = "pointer";
+            btn.style.fontSize = "0.9rem";
+            btn.setAttribute("data-name", name);
+            pill.appendChild(btn);
+          }
+
+          list.appendChild(pill);
+        });
+      }
+
+      function addType(name) {
+        if (!name) return;
+        name = name.trim();
+        if (!name) return;
+        name = name.replace(/\s+/g, " ");
+
+        if (certTypes.indexOf(name) !== -1) {
+          alert("This certificate type already exists.");
+          return;
+        }
+
+        certTypes.push(name);
+        certTypes.sort(function (a, b) { return a.localeCompare(b); });
+        saveTypes();
+        renderSelect();
+        renderList();
+      }
+
+      function removeType(name) {
+        var idx = certTypes.indexOf(name);
+        if (idx === -1) return;
+        if (DEFAULT_CERT_TYPES.indexOf(name) !== -1) {
+          alert("Default certificate types cannot be removed.");
+          return;
+        }
+        if (!window.confirm('Remove certificate type "' + name + '"?')) return;
+
+        certTypes.splice(idx, 1);
+        saveTypes();
+        renderSelect();
+        renderList();
+      }
+
+      document.addEventListener("DOMContentLoaded", function () {
+        loadTypes();
+        renderSelect();
+        renderList();
+
+        var addBtn = document.getElementById("cert-type-add-btn");
+        var input = document.getElementById("cert-type-new");
+        var list = document.getElementById("cert-type-list");
+
+        if (addBtn && input) {
+          addBtn.addEventListener("click", function () {
+            addType(input.value);
+            input.value = "";
+            input.focus();
+          });
+
+          input.addEventListener("keydown", function (e) {
+            if (e.key === "Enter") {
+              e.preventDefault();
+              addType(input.value);
+              input.value = "";
+            }
+          });
+        }
+
+        if (list) {
+          list.addEventListener("click", function (e) {
+            var btn = e.target.closest("button[data-name]");
+            if (!btn) return;
+            var name = btn.getAttribute("data-name");
+            removeType(name);
+          });
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
