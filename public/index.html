@@ -1103,9 +1103,25 @@
     <p id="audits-message" class="message"></p>
   </div>
 
-  <!-- Audit register -->
+  <!-- Audit register + exports -->
   <div class="card large" style="margin-top:1rem;">
-    <h3>Audit Register</h3>
+    <div
+      style="display:flex; justify-content:space-between; align-items:center; gap:12px;"
+    >
+      <h3>Audit Register</h3>
+      <div style="display:flex; gap:6px; flex-wrap:wrap;">
+        <button type="button" class="btn secondary btn-small" id="audits-export-csv">
+          Export CSV
+        </button>
+        <button type="button" class="btn secondary btn-small" id="audits-export-word">
+          Export Word
+        </button>
+        <button type="button" class="btn subtle btn-small" id="audits-export-pdf">
+          Export PDF
+        </button>
+      </div>
+    </div>
+
     <table class="data-table">
       <thead>
         <tr>
@@ -1122,8 +1138,46 @@
       <tbody id="audits-table-body"></tbody>
     </table>
   </div>
+
+  <!-- Audit Summary Chart (Department-wise) -->
+  <div class="card large" style="margin-top:1rem;">
+    <h3>Audit Summary by Area (Department)</h3>
+    <p style="font-size:0.85rem; color:#4b5563;">
+      Simple bar chart showing total audits per area / department (open + closed).
+    </p>
+    <canvas id="audit-chart" width="700" height="260"></canvas>
+  </div>
 </section>
-        <!-- ===== TRAINING VIEW ===== -->
+<!-- Audit Compliance Score (replaces second summary block) -->
+<div class="card large" style="margin-top:1rem;">
+  <h3>Audit Compliance Score</h3>
+  <p style="font-size:0.85rem; color:#4b5563;">
+    Simple score based on number and severity of open vs closed audits.
+  </p>
+
+  <!-- Big overall score number -->
+  <div style="font-size:32px; font-weight:700; margin:8px 0;">
+    <span id="audit-score-value">--</span>
+  </div>
+
+  <!-- Breakdown by area -->
+  <table class="table small mt-2">
+    <thead>
+      <tr>
+        <th>Area / Department</th>
+        <th>Total Audits</th>
+        <th>Average Score</th>
+      </tr>
+    </thead>
+    <tbody id="audit-score-by-area-body">
+      <tr>
+        <td colspan="3" style="text-align:center; color:#6b7280;">
+          No score data yet.
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
         <!-- ===== TRAINING VIEW ===== -->
 <section id="view-training" class="app-view">
   <h2>Training &amp; Competency Matrix</h2>
@@ -1676,14 +1730,20 @@
   <!-- ===============================
        SCRIPTS (order is important!)
        =============================== -->
- <script src="scripts/api.js"></script>
+ <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script src="scripts/api.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="scripts/api.js"></script>
 <script src="scripts/suppliers.js"></script>
 <script src="scripts/complaints.js"></script>
 <script src="scripts/audits.js"></script>
-<script src="scripts/training.js"></script> <!-- 👈 add this -->
-<script src="scripts/app.js"></script>
-<script src="scripts/dashboard.js"></script>
+<script src="scripts/training.js"></script>
 <script src="scripts/documents.js"></script>
+<script src="scripts/allergens.js"></script>
+<script src="scripts/dashboard.js"></script>
+<script src="scripts/app.js"></script>
 <!-- GDPR Footer Navigation -->
 <script>
   // Make footer "GDPR & Privacy" link open the Legal view inside the app

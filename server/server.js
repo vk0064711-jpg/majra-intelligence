@@ -5,12 +5,14 @@ const cors = require("cors");
 const path = require("path");
 
 const { init } = require("./db");
+
+// Route modules
 const authRoutes = require("./routes/auth");
 const complaintsRoutes = require("./routes/complaints");
 const suppliersRoutes = require("./routes/suppliers");
 const auditsRoutes = require("./routes/audits");
-const documentsRoutes = require("./routes/documents");   // ✅ new
-const trainingRoutes = require("./routes/training");     // ✅ new
+const documentsRoutes = require("./routes/documents");
+const trainingRoutes = require("./routes/training");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -22,7 +24,7 @@ app.use(cors());
 app.use(express.json());
 
 // --------------------
-// Serve FRONTEND properly
+// Serve FRONTEND
 // --------------------
 app.use(express.static(path.join(__dirname, "..", "public")));
 
@@ -33,8 +35,8 @@ app.use("/api/auth", authRoutes);
 app.use("/api/complaints", complaintsRoutes);
 app.use("/api/suppliers", suppliersRoutes);
 app.use("/api/audits", auditsRoutes);
-app.use("/api/documents", documentsRoutes);   // ✅ documents module
-app.use("/api/training", trainingRoutes);     // ✅ training module
+app.use("/api/documents", documentsRoutes);
+app.use("/api/training", trainingRoutes);
 
 // Health check
 app.get("/api/health", (req, res) => {
@@ -53,7 +55,7 @@ app.get("/", (req, res) => {
 // --------------------
 init()
   .then(() => {
-    console.log("Database initialised successfully.");
+    console.log("✅ Database initialised successfully.");
     app.listen(PORT, () => {
       console.log(
         "Majra Intelligence backend running on http://localhost:" + PORT
@@ -61,6 +63,6 @@ init()
     });
   })
   .catch((err) => {
-    console.error("Error initialising database:", err);
+    console.error("❌ Error initialising database:", err);
     process.exit(1);
   });

@@ -1,0 +1,16 @@
+# Node modules
+node_modules/
+server/node_modules/
+
+# Local SQLite files
+*.sqlite
+*.db
+
+# Environment files (secrets)
+.env
+server/.env
+
+# Uploads
+uploads/
+server/uploads/
+public/uploads/

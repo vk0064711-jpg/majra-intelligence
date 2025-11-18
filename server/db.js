@@ -1,53 +1,96 @@
 // server/db.js
-// Central SQLite database helper for Majra Intelligence
+// Central PostgreSQL (Neon) database helper for Majra Intelligence
 
-const sqlite3 = require("sqlite3").verbose();
-const path = require("path");
+const { Pool } = require("pg");
 require("dotenv").config();
 
-const dbPath = path.join(__dirname, process.env.DB_FILE || "majra.sqlite");
+if (!process.env.POSTGRES_URL) {
+  console.error("❌ POSTGRES_URL is missing in .env");
+  process.exit(1);
+}
 
-const db = new sqlite3.Database(dbPath, (err) => {
-  if (err) {
-    console.error("❌ Failed to connect to SQLite database:", err);
-  } else {
-    console.log("✅ Connected to SQLite database:", dbPath);
-  }
+// Create a connection pool to Neon Postgres
+const pool = new Pool({
+  connectionString: process.env.POSTGRES_URL,
+  ssl: { rejectUnauthorized: false }
 });
+
+// ----------------------------------------
+// Helper: convert "?" placeholders -> $1, $2, ...
+// so your existing SQL in routes still works.
+// ----------------------------------------
+function convertPlaceholders(sql) {
+  let index = 0;
+  return sql.replace(/\?/g, () => {
+    index += 1;
+    return "$" + index;
+  });
+}
 
 // ----------------------------------------
 // Helper wrappers
 // ----------------------------------------
 
-function run(sql, params = []) {
-  return new Promise((resolve, reject) => {
-    db.run(sql, params, function (err) {
-      if (err) return reject(err);
-      resolve(this); // this.lastID, this.changes
-    });
-  });
+// For INSERT / UPDATE / DELETE or any statement
+async function run(sql, params = []) {
+  try {
+    const originalSql = sql;
+    sql = convertPlaceholders(sql);
+
+    // If it's an INSERT without RETURNING, add RETURNING id
+    // so we can emulate sqlite's this.lastID
+    const isInsert = /^\s*insert/i.test(sql);
+    const hasReturning = /\breturning\b/i.test(sql);
+
+    let result;
+    if (isInsert && !hasReturning) {
+      // add RETURNING id
+      sql = sql.replace(/;?\s*$/i, " RETURNING id;");
+      result = await pool.query(sql, params);
+      if (result.rows && result.rows[0] && result.rows[0].id != null) {
+        result.lastID = result.rows[0].id;
+      }
+    } else {
+      result = await pool.query(sql, params);
+    }
+
+    // emulate sqlite "changes"
+    result.changes = result.rowCount;
+    return result;
+  } catch (err) {
+    console.error("SQL run error:", err, "\nSQL:", sql);
+    throw err;
+  }
 }
 
-function get(sql, params = []) {
-  return new Promise((resolve, reject) => {
-    db.get(sql, params, (err, row) => {
-      if (err) return reject(err);
-      resolve(row);
-    });
-  });
+// For single row SELECT
+async function get(sql, params = []) {
+  try {
+    const originalSql = sql;
+    sql = convertPlaceholders(sql);
+    const result = await pool.query(sql, params);
+    return result.rows[0] || null;
+  } catch (err) {
+    console.error("SQL get error:", err, "\nSQL:", sql);
+    throw err;
+  }
 }
 
-function all(sql, params = []) {
-  return new Promise((resolve, reject) => {
-    db.all(sql, params, (err, rows) => {
-      if (err) return reject(err);
-      resolve(rows);
-    });
-  });
+// For multiple rows SELECT
+async function all(sql, params = []) {
+  try {
+    const originalSql = sql;
+    sql = convertPlaceholders(sql);
+    const result = await pool.query(sql, params);
+    return result.rows;
+  } catch (err) {
+    console.error("SQL all error:", err, "\nSQL:", sql);
+    throw err;
+  }
 }
 
 // ----------------------------------------
-// Initialise schema
+// Initialise schema (Postgres version)
 // ----------------------------------------
 
 async function init() {
@@ -57,10 +100,10 @@ async function init() {
     // -----------------------------
     await run(`
       CREATE TABLE IF NOT EXISTS companies (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        id SERIAL PRIMARY KEY,
         name TEXT NOT NULL,
         address TEXT,
-        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
     `);
 
@@ -69,15 +112,14 @@ async function init() {
     // -----------------------------
     await run(`
       CREATE TABLE IF NOT EXISTS users (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        company_id INTEGER NOT NULL,
+        id SERIAL PRIMARY KEY,
+        company_id INTEGER NOT NULL REFERENCES companies(id),
         name TEXT NOT NULL,
         email TEXT NOT NULL UNIQUE,
         password_hash TEXT NOT NULL,
         role TEXT NOT NULL DEFAULT 'admin',
         is_active INTEGER DEFAULT 1,
-        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (company_id) REFERENCES companies(id)
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
     `);
 
@@ -86,8 +128,8 @@ async function init() {
     // -----------------------------
     await run(`
       CREATE TABLE IF NOT EXISTS complaints (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        company_id INTEGER NOT NULL,
+        id SERIAL PRIMARY KEY,
+        company_id INTEGER NOT NULL REFERENCES companies(id),
 
         date_received TEXT,
         customer_name TEXT,
@@ -105,10 +147,8 @@ async function init() {
 
         letter_body TEXT,
 
-        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        updated_at DATETIME,
-
-        FOREIGN KEY (company_id) REFERENCES companies(id)
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP
       );
     `);
 
@@ -117,8 +157,8 @@ async function init() {
     // -----------------------------
     await run(`
       CREATE TABLE IF NOT EXISTS suppliers (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        company_id INTEGER NOT NULL,
+        id SERIAL PRIMARY KEY,
+        company_id INTEGER NOT NULL REFERENCES companies(id),
 
         name TEXT NOT NULL,
         material TEXT,
@@ -128,10 +168,8 @@ async function init() {
         status TEXT,
         notes TEXT,
 
-        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        updated_at DATETIME,
-
-        FOREIGN KEY (company_id) REFERENCES companies(id)
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP
       );
     `);
 
@@ -140,8 +178,8 @@ async function init() {
     // -----------------------------
     await run(`
       CREATE TABLE IF NOT EXISTS documents (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        company_id INTEGER NOT NULL,
+        id SERIAL PRIMARY KEY,
+        company_id INTEGER NOT NULL REFERENCES companies(id),
 
         code TEXT,             -- e.g. DOC-001
         title TEXT NOT NULL,   -- Procedure name
@@ -161,10 +199,8 @@ async function init() {
         location TEXT,
         notes TEXT,
 
-        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        updated_at DATETIME,
-
-        FOREIGN KEY (company_id) REFERENCES companies(id)
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP
       );
     `);
 
@@ -173,66 +209,59 @@ async function init() {
     // -----------------------------
     await run(`
       CREATE TABLE IF NOT EXISTS training_records (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        company_id INTEGER NOT NULL,
+        id SERIAL PRIMARY KEY,
+        company_id INTEGER NOT NULL REFERENCES companies(id),
 
-        employee_name TEXT NOT NULL,        -- 1
-        employee_email TEXT,                -- 2
-        job_title TEXT,                     -- 3
-        department TEXT,                    -- 4
-        training_topic TEXT NOT NULL,       -- 5
-        training_type TEXT,                 -- 6
-        provider TEXT,                      -- 7
-        status TEXT,                        -- 8
-        due_date TEXT,                      -- 9
-        completion_date TEXT,               -- 10
-        validity_months INTEGER,            -- 11
-        next_review_date TEXT,              -- 12
-        certificate_location TEXT,          -- 13
-        notes TEXT,                         -- 14
+        employee_name TEXT NOT NULL,
+        employee_email TEXT,
+        job_title TEXT,
+        department TEXT,
+        training_topic TEXT NOT NULL,
+        training_type TEXT,
+        provider TEXT,
+        status TEXT,
+        due_date TEXT,
+        completion_date TEXT,
+        validity_months INTEGER,
+        next_review_date TEXT,
+        certificate_location TEXT,
+        notes TEXT,
 
-        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        updated_at DATETIME,
-
-        FOREIGN KEY (company_id) REFERENCES companies(id)
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP
       );
     `);
 
     // -----------------------------
-    // AUDITS (GMP / Internal audits)
+    // AUDITS & GMP INSPECTIONS
     // -----------------------------
     await run(`
       CREATE TABLE IF NOT EXISTS audits (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        company_id INTEGER NOT NULL,
+        id SERIAL PRIMARY KEY,
+        company_id INTEGER NOT NULL REFERENCES companies(id),
 
         title TEXT NOT NULL,
         area TEXT,
         standard TEXT,
         section TEXT,
         auditor TEXT,
-
         audit_date TEXT,
         status TEXT DEFAULT 'open',
         severity TEXT,
         due_date TEXT,
         responsible_person TEXT,
-
         findings TEXT,
         root_cause TEXT,
         corrective_action TEXT,
         preventive_action TEXT,
-
         evidence_notes TEXT,
 
-        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        updated_at DATETIME,
-
-        FOREIGN KEY (company_id) REFERENCES companies(id)
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
     `);
 
-    console.log("✅ Database initialised successfully.");
+    console.log("✅ Database initialised successfully (Postgres / Neon).");
   } catch (err) {
     console.error("❌ Error initialising database:", err);
     throw err;
@@ -240,9 +269,9 @@ async function init() {
 }
 
 module.exports = {
-  db,
+  pool,
   run,
   get,
   all,
-  init,
+  init
 };

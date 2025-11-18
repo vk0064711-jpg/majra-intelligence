@@ -337,4 +337,5 @@
   window.updateAudit = updateAudit;
   window.deleteAudit = deleteAudit;
   window.fetchAuditStats = fetchAuditStats;
+  window.fetchAuditScore = fetchAuditScore;
 })();
