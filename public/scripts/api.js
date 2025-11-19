@@ -4,7 +4,7 @@
 (function () {
   "use strict";
 
-  var API_BASE_URL = "http://localhost:3000";
+  var API_BASE_URL ="https://majra-intelligence.onrender.com";
   window.API_BASE_URL = API_BASE_URL;
 
   // ---------------- Token helpers ----------------
